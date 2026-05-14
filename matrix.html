@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+        body {
+            min-height: 100dvh;
+            background-color: black;
+        }
+        canvas {
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <canvas>
+
+    </canvas>
+    <script>
+        const canvas = document.querySelector('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const dpr = devicePixelRatio;
+        const ww = innerWidth;
+        const wh = innerHeight;
+        canvas.width = ww * dpr;
+        canvas.height = wh * dpr;
+        ctx.scale(dpr, dpr);
+
+        const chartArray = "qwerasffaf1244125125".split('');
+        const fontSize = 16;
+        const columns = Math.floor(ww/ fontSize);
+        const drops = Array.from (
+            { length: columns},
+            () =>Math.random() * (wh/ fontSize)
+        );
+
+        let lastTime = 0;
+        const fps = 20;
+        const interval = 1000 / fps;
+
+        function draw(timestamp) {
+            requestAnimationFrame(draw);
+
+            const delta = timestamp - lastTime;
+            if (delta < interval) return;
+            lastTime = timestamp;
+
+            ctx.fillStyle = "rgba(0,0,0,0.1)";
+            ctx.fillRect(0,0,ww,wh);
+
+            ctx.font = `$(fontSize)px monospace`;
+
+            drops.forEach((y, i) => {
+                const text = chartArray[Math.floor(Math.random() * chartArray.length)];
+                const x = i * fontSize;
+
+                ctx.fillStyle = Math.random() > 0.98 ? 'white' : 'green';
+                ctx.fillText(text, x, y * fontSize);
+
+                if(y * fontSize > wh && Math.random() > 0.98) {
+                    drops[i] = 0;
+                }
+
+                drops[i]++;
+            })
+        }
+        requestAnimationFrame(draw);
+    </script>
+</body>
+</html>
